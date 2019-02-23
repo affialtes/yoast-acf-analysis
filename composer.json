@@ -17,7 +17,7 @@
   ],
   "type": "wordpress-plugin",
   "homepage": "https://wordpress.org/plugins/acf-content-analysis-for-yoast-seo/",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Thomas Kräftner",
@@ -44,6 +44,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
+    "php": ">=5.2",
     "composer/installers": "~1.0",
     "xrstf/composer-php52": "1.*"
   },
@@ -51,16 +52,14 @@
     "php": ">=5.6.0",
     "brain/monkey": "2.*",
     "phpunit/phpunit": "5.*",
-    "wp-coding-standards/wpcs": "^0.13.1",
-    "roave/security-advisories": "dev-master"
+    "yoast/yoastcs": "^1.2.2"
   },
   "autoload": {
     "classmap": [ "inc" ]
   },
   "autoload-dev": {
-    "psr-4": {
-      "Yoast\\AcfAnalysis\\Tests\\": "tests/php/unit"
-    },
+    "classmap": [ "tests/php/unit" ],
+    "exclude-from-classmap": ["/tests/php/unit/Dependencies/acf.php"],
     "files": [
       "tests/js/system/data/test-data-loader-functions.php"
     ]
@@ -76,19 +75,24 @@
       "xrstf\\Composer52\\Generator::onPostInstallCmd"
     ],
     "test": [
-      "vendor/bin/phpunit --configuration tests/php/phpunit.xml.dist --colors=always"
+      "@php ./vendor/phpunit/phpunit/phpunit --colors=always"
     ],
     "configure-phpcs": [
-      "\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs"
+      "@config-yoastcs"
+    ],
+    "config-yoastcs": [
+      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --config-set default_standard Yoast"
     ],
     "check-cs": [
-      "\"vendor/bin/phpcs\""
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --ignore=./tests",
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs ./tests/ --runtime-set testVersion 5.6-"
     ],
     "check-cs-errors": [
-      "\"vendor/bin/phpcs\" --error-severity=1 --warning-severity=6"
+      "@check-cs"
     ],
     "fix-cs": [
-      "\"vendor/bin/phpcbf\""
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
     ]
   }
 }

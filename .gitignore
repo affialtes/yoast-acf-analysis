@@ -6,3 +6,7 @@ tests/js/system/reports
 tests/js/system/screenshots
 .env.js
 nightwatch.conf.js
+
+phpcs.xml
+.phpcs.xml
+phpunit.xml
