@@ -44,6 +44,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
+    "php": ">=5.2",
     "composer/installers": "~1.0",
     "xrstf/composer-php52": "1.*"
   },
@@ -51,9 +52,7 @@
     "php": ">=5.6.0",
     "brain/monkey": "2.*",
     "phpunit/phpunit": "5.*",
-    "roave/security-advisories": "dev-master",
-    "yoast/yoastcs": "^1.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
+    "yoast/yoastcs": "^1.2.2"
   },
   "autoload": {
     "classmap": [ "inc" ]
@@ -76,20 +75,24 @@
       "xrstf\\Composer52\\Generator::onPostInstallCmd"
     ],
     "test": [
-      "vendor/bin/phpunit --configuration tests/php/phpunit.xml.dist --colors=always"
+      "@php ./vendor/phpunit/phpunit/phpunit --colors=always"
     ],
     "configure-phpcs": [
-      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+      "@config-yoastcs"
+    ],
+    "config-yoastcs": [
+      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --config-set default_standard Yoast"
     ],
     "check-cs": [
-      "\"vendor/bin/phpcs\" --ignore=./tests --runtime-set ignore_warnings_on_exit 1",
-      "\"vendor/bin/phpcs\" ./tests/ --runtime-set testVersion 5.6- --runtime-set ignore_warnings_on_exit 1"
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --ignore=./tests",
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs ./tests/ --runtime-set testVersion 5.6-"
     ],
     "check-cs-errors": [
       "@check-cs"
     ],
     "fix-cs": [
-      "\"vendor/bin/phpcbf\""
+      "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
     ]
   }
 }
